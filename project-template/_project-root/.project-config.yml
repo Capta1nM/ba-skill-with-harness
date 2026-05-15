@@ -1,0 +1,83 @@
+# .project-config.yml — Engagement metadata for ba-skill
+#
+# Đặt file này ở engagement root. Sub-agents walk up directory tree để
+# tìm file này, từ đó suy ra: wiki path, methodology shape, engagement
+# name.
+
+engagementName: "{ENGAGEMENT_NAME}"     # vd: "marketing-task-tool"
+engagementType: "internal-tool"          # internal-tool | customer-facing | regulated | vendor-handover
+
+# Wiki path tương đối tính từ file này
+wiki: "./docs"
+memory: "./docs/memory"                  # engagement memory, KHÔNG OS-level Claude memory
+
+# ⭐ Methodology shape — Phase 5 sẽ enforce
+methodology: "{METHODOLOGY}"             # undecided | srs-only | prd-stories | stories-only
+methodologyDecisionFile: ""              # filled khi decision logged: docs/decisions/<NNNN>-methodology.md
+
+# Skills version (cài qua ba-skill/install.sh)
+skillsVersion: "1.0"
+
+# Phase status (auto-updated by orchestrator)
+phaseStatus:
+  P0_intake: "not-started"               # not-started | in-progress | done
+  P1_elicitation_prep: "not-started"
+  P2_elicitation_exec: "not-started"
+  P3_domain_scope: "not-started"
+  P4_brd: "not-started"
+  P5_spec_stories: "not-started"
+  P6_wireframes: "not-started"
+
+# Stakeholder identification scheme
+stakeholderIdScheme:
+  primary: "STK-001..STK-099"
+  secondary: "STK-101..STK-199"
+  excluded: "STK-201..STK-299"
+
+# Artifact ID schemes (chuẩn ba-skill, hiếm override)
+artifactIdScheme:
+  intake: "INT-YYYY-MM-DD-NNN"
+  rawNote: "<PREFIX>-YYYY-MM-DD-<slug>"  # MN/TR/EM/DOC/MSG/OBS/SUR
+  session: "SES-YYYY-MM-DD-<slug>"
+  rawStatement: "RAW-<NNN>"
+  requirement: "REQ-<NNN>"               # REQ for functional, NFR/CON/ASM for others
+  module: "MOD-<Name>"
+  brd: "BR-<sec>.<sub>"
+  spec: "SR-<sec>.<sub>.<n>"             # for SRS, CAP-<NN> for PRD
+  epic: "EPC-<NN>"
+  userStory: "US-<NNN>"
+  useCase: "UC-<NNN>"
+  screen: "SCR-<Name>"
+  decision: "DEC-<NNNN>"
+  changeRequest: "CR-YYYY-MM-DD-<NNN>"
+
+# Hard gates global — bất kỳ task chạm đều auto high-risk
+hardGatesGlobal:
+  - "scope-after-signoff"                # scope change sau sponsor sign-off
+  - "compliance"                         # regulatory/audit
+  - "methodology-change"                 # đổi srs/prd/us shape
+  - "signed-off-artifact-change"         # đè BRD/SRS đã signed-off
+
+# Validation policy
+validationPolicy:
+  brdSignoffRequired: true
+  specSignoffRequired: true
+  scopeWalkthroughRequired: true
+  wireframeCrosscheckRequired: true
+  changeRequestForAgreedArtifact: true
+
+# Memory rules
+memoryRules:
+  autoSaveOnFriction: true
+  reviewMemoryOnTaskStart: true
+  scopeIsolation: "engagement-only"      # KHÔNG sync OS-level Claude memory
+
+# Capacity reality
+capacity:
+  sessionsPerWeekPerBa: 3                # cap session/tuần/BA — vượt → flag risk
+
+# Bootstrap metadata (filled by bootstrap.sh)
+bootstrap:
+  date: "{BOOTSTRAP_DATE}"
+  baSkillVersion: "1.0"
+  templateOrigin: "~/.claude/skills/project-template/"
